@@ -13,6 +13,30 @@ type Client struct {
 	config          *config
 }
 
+func NewClientWithParas(trackerAddr,maxConns string) (*Client, error) {
+	config := &config{}
+	config.trackerAddr = trackerAddr
+        config.maxConns = strconv.Atoi(maxConns)
+	
+	client := &Client{
+		config:          config,
+		storagePoolLock: &sync.RWMutex{},
+	}
+	client.trackerPools = make(map[string]*connPool)
+	client.storagePools = make(map[string]*connPool)
+
+	for _, addr := range config.trackerAddr {
+		trackerPool, err := newConnPool(addr, config.maxConns)
+		if err != nil {
+			return nil, err
+		}
+		client.trackerPools[addr] = trackerPool
+	}
+
+	return client, nil
+}
+
+
 func NewClientWithConfig(configName string) (*Client, error) {
 	config, err := newConfig(configName)
 	if err != nil {
