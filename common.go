@@ -136,9 +136,17 @@ func (this *header) RecvHeader(conn net.Conn) error {
 }
 
 func splitFileId(fileId string) (string, string, error) {
-	str := strings.SplitN(fileId, "/", 2)
+	str := strings.SplitN(fileId, ":", 2)
 	if len(str) < 2 {
 		return "", "", fmt.Errorf("invalid fildId")
 	}
 	return str[0], str[1], nil
 }
+
+// func splitFileId(fileId string) (string, string, error) {
+// 	str := strings.SplitN(fileId, "/", 2)
+// 	if len(str) < 2 {
+// 		return "", "", fmt.Errorf("invalid fildId")
+// 	}
+// 	return str[0], str[1], nil
+// }
